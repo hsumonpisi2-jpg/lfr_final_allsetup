@@ -20,14 +20,7 @@
 //   NOTE: This file defines its own main(). In an Mbed build only one main()
 //   may exist, so build this file INSTEAD OF sonartest.cpp (exclude the other
 //   from the build / move it out of the source tree).
-// ----------------------------------------------------------------------------
-//  AVOID_MODE selects which maneuver runs when an obstacle is detected:
-//    0 = AUTO     : same as the main program -- picks DIAGONAL below
-//                   OBSTACLE_DIST_DIAG_CM, otherwise FRONTAL.  (both)
-//    1 = FRONTAL  : always run avoid_obstacle()       (tune the frontal move)
-//    2 = DIAGONAL : always run avoid_obstacle_Diag()  (tune the diagonal move)
 // ============================================================================
-#define AVOID_MODE 0
 
 
 // ============================================================================
@@ -243,16 +236,6 @@ int main() {
 
                 if (emergency || ++obstacle_hits >= OBSTACLE_CONFIRM) {
                     obstacle_hits = 0;
-#if   AVOID_MODE == 1
-                    // FRONTAL only.
-                    printf(">>> OBSTACLE at %d cm -> avoid (frontal, forced) <<<\n", (int)dist);
-                    avoid_obstacle();
-#elif AVOID_MODE == 2
-                    // DIAGONAL only.
-                    printf(">>> OBSTACLE at %d cm -> avoid_diagonal (forced) <<<\n", (int)dist);
-                    avoid_obstacle_Diag();
-#else
-                    // AUTO: pick maneuver by distance, same as the main program.
                     if (dist < OBSTACLE_DIST_DIAG_CM) {
                         printf(">>> DIAGONAL obstacle at %d cm -> avoid_diagonal <<<\n", (int)dist);
                         avoid_obstacle_Diag();
@@ -260,7 +243,6 @@ int main() {
                         printf(">>> OBSTACLE at %d cm -> avoid <<<\n", (int)dist);
                         avoid_obstacle();
                     }
-#endif
                     continue;   // re-check distance fresh next loop
                 }
             } else {
